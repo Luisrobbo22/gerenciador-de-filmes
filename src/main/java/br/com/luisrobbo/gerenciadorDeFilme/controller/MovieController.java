@@ -8,12 +8,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/movies")
+@RequestMapping(value = "/movies/search")
 public class MovieController {
 
     @Autowired
@@ -32,15 +31,15 @@ public class MovieController {
     }
 
 
-    @PutMapping(value = "/{title}")
-    public ResponseEntity<Void> update(@RequestBody Movie newMovie) {
+    @PutMapping(value = "/{imdbID}")
+    public ResponseEntity<Void> update(@PathVariable String imdbID, @RequestBody Movie newMovie) {
         Movie movie = new Movie(newMovie.getTitle(), newMovie.getImdbID(), newMovie.getYear());
-        movie = service.update(movie);
+        movie = service.update(movie, imdbID);
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping
-    public ResponseEntity<Void> insert(@Valid @RequestBody Movie newMovie) {
+    public ResponseEntity<Void> insert(@RequestBody Movie newMovie) {
         Movie movie = new Movie(newMovie.getTitle(), newMovie.getImdbID(), newMovie.getYear());
         movie = service.insert(movie);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -55,14 +54,15 @@ public class MovieController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping(value = "/page")
+    @GetMapping(value = "/")
     public ResponseEntity<Page<Movie>> findPage(
             @RequestParam(value = "title", defaultValue = "") String title,
             @RequestParam(value = "page", defaultValue = "0") Integer page,
             @RequestParam(value = "per_page", defaultValue = "10") Integer perPage,
             @RequestParam(value = "sortBy", defaultValue = "id") String sortBy,
             @RequestParam(value = "direction", defaultValue = "ASC") String direction) {
-        Page<Movie> list = service.findPage(page, perPage);
+
+        Page<Movie> list = service.findPage(title, page, perPage);
 
         return ResponseEntity.ok().body(list);
     }

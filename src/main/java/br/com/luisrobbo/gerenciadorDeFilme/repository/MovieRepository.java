@@ -1,8 +1,12 @@
 package br.com.luisrobbo.gerenciadorDeFilme.repository;
 
 import br.com.luisrobbo.gerenciadorDeFilme.model.Movie;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -14,4 +18,5 @@ public interface MovieRepository extends JpaRepository<Movie, Integer> {
     List<Movie> findAllByTitle(String title);
 
     Movie findByImdbID(String imdbID);
+
 }

@@ -42,8 +42,8 @@ public class MovieService {
         newMovie.setYear(movie.getYear());
     }
 
-    public Movie update(Movie movie) {
-        Movie newMovie = (Movie) find(movie.getImdbID());
+    public Movie update(Movie movie, String imdbID) {
+        Movie newMovie = repository.findByImdbID(imdbID);
         updateData(newMovie, movie);
         return repository.save(newMovie);
     }
@@ -51,7 +51,9 @@ public class MovieService {
     @Transactional
     public Movie insert(Movie movie) {
         Movie nMovie = repository.findByImdbID(movie.getImdbID());
-        if (movie.getImdbID() != nMovie.getImdbID()) {
+        if (nMovie == null) {
+            movie = repository.saveAndFlush(movie);
+        } else if (!movie.getImdbID().equals(nMovie.getImdbID())){
             movie = repository.save(movie);
         } else {
             throw new DataIntegretyException("Filme já cadastrado");
@@ -68,7 +70,8 @@ public class MovieService {
         }
     }
 
-    public Page<Movie> findPage(Integer page, Integer perPage){
+    public Page<Movie> findPage(String title,Integer page, Integer perPage){
+        List<Movie> movies = repository.findAllByTitle(title);
         PageRequest pageRequest = PageRequest.of(page, perPage);
         return repository.findAll(pageRequest);
     }
