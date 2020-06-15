@@ -1,5 +1,6 @@
 package br.com.luisrobbo.gerenciadorDeFilme.controller;
 
+import br.com.luisrobbo.gerenciadorDeFilme.handler.GerenciadorFilmesException;
 import br.com.luisrobbo.gerenciadorDeFilme.model.Movie;
 import br.com.luisrobbo.gerenciadorDeFilme.services.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,6 @@ public class MovieController {
         return ResponseEntity.ok().body(service.findAll(pageable));
     }
 
-
     @PutMapping(value = "/{imdbID}")
     public ResponseEntity<Void> update(@PathVariable String imdbID, @RequestBody Movie newMovie) {
         Movie movie = new Movie(newMovie.getTitle(), newMovie.getImdbID(), newMovie.getYear());
@@ -41,7 +41,7 @@ public class MovieController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> insert(@RequestBody Movie newMovie) {
+    public ResponseEntity<Void> insert(@RequestBody Movie newMovie) throws GerenciadorFilmesException {
         Movie movie = new Movie(newMovie.getTitle(), newMovie.getImdbID(), newMovie.getYear());
         movie = service.insert(movie);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -51,7 +51,7 @@ public class MovieController {
     }
 
     @DeleteMapping(value = "/{imdbID}")
-    public ResponseEntity<Void> delete(@PathVariable String imdbID) {
+    public ResponseEntity<Void> delete(@PathVariable String imdbID) throws GerenciadorFilmesException {
         service.delete(imdbID);
         return ResponseEntity.noContent().build();
     }

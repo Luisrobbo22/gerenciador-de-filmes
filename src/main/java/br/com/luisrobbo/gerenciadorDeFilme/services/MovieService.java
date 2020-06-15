@@ -1,8 +1,8 @@
 package br.com.luisrobbo.gerenciadorDeFilme.services;
 
+import br.com.luisrobbo.gerenciadorDeFilme.handler.GerenciadorFilmesException;
 import br.com.luisrobbo.gerenciadorDeFilme.model.Movie;
 import br.com.luisrobbo.gerenciadorDeFilme.repository.MovieRepository;
-import br.com.luisrobbo.gerenciadorDeFilme.services.exeptions.DataIntegretyException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.*;
@@ -37,22 +37,22 @@ public class MovieService {
     }
 
     @Transactional
-    public Movie insert(Movie movie) {
+    public Movie insert(Movie movie) throws GerenciadorFilmesException {
         Movie nMovie = repository.findByImdbID(movie.getImdbID());
         if (nMovie == null) {
             movie = repository.saveAndFlush(movie);
         } else {
-            throw new DataIntegretyException("Filme já cadastrado");
+            throw new GerenciadorFilmesException("Filme já cadastrado");
         }
         return movie;
     }
 
-    public void delete(String imdbID) {
+    public void delete(String imdbID) throws GerenciadorFilmesException {
         Movie movie = repository.findByImdbID(imdbID);
         try {
             repository.deleteById(movie.getId());
         } catch (DataIntegrityViolationException e) {
-            throw new DataIntegretyException("Não há Filme para ser deletado");
+            throw new GerenciadorFilmesException("Não há Filme para ser deletado");
         }
     }
 
