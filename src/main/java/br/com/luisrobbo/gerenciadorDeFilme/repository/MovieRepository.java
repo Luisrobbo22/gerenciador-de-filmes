@@ -2,11 +2,8 @@ package br.com.luisrobbo.gerenciadorDeFilme.repository;
 
 import br.com.luisrobbo.gerenciadorDeFilme.model.Movie;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -14,8 +11,7 @@ import java.util.List;
 @Repository
 public interface MovieRepository extends JpaRepository<Movie, Integer> {
 
-    @Query("SELECT m FROM Movie m WHERE m.title like %:title% ")
-    List<Movie> findAllByTitle(String title);
+    Page<List<Movie>> findAllByTitleContains(String title, Pageable pageable);
 
     Movie findByImdbID(String imdbID);
 

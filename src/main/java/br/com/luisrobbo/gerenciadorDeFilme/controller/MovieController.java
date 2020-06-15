@@ -4,6 +4,8 @@ import br.com.luisrobbo.gerenciadorDeFilme.model.Movie;
 import br.com.luisrobbo.gerenciadorDeFilme.services.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -12,7 +14,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/movies/search")
+@RequestMapping(value = "/movies")
 public class MovieController {
 
     @Autowired
@@ -20,14 +22,14 @@ public class MovieController {
 
 
     @GetMapping(value = "/{title}")
-    public ResponseEntity<List<Movie>> find(@PathVariable String title) {
-        return ResponseEntity.ok().body(service.find(title));
+    public ResponseEntity<Page<List<Movie>>> find(@PathVariable String title, Pageable pageable) {
+        return ResponseEntity.ok().body(service.find(title,pageable));
 
     }
 
     @GetMapping(value = "/")
-    public ResponseEntity<List<Movie>> findAll() {
-        return ResponseEntity.ok().body(service.findAll());
+    public ResponseEntity<Slice<Movie>> findAll(Pageable pageable) {
+        return ResponseEntity.ok().body(service.findAll(pageable));
     }
 
 
@@ -54,15 +56,15 @@ public class MovieController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping(value = "/")
-    public ResponseEntity<Page<Movie>> findPage(
+    @GetMapping(value = "/search/")
+    public ResponseEntity<Page<List<Movie>>> findPage(
             @RequestParam(value = "title", defaultValue = "") String title,
             @RequestParam(value = "page", defaultValue = "0") Integer page,
             @RequestParam(value = "per_page", defaultValue = "10") Integer perPage,
             @RequestParam(value = "sortBy", defaultValue = "id") String sortBy,
             @RequestParam(value = "direction", defaultValue = "ASC") String direction) {
 
-        Page<Movie> list = service.findPage(title, page, perPage);
+        Page<List<Movie>> list = service.findPage(title, page, perPage);
 
         return ResponseEntity.ok().body(list);
     }

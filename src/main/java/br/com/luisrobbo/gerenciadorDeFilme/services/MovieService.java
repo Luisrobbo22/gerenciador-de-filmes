@@ -9,7 +9,6 @@ import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -18,23 +17,12 @@ public class MovieService {
     @Autowired
     private MovieRepository repository;
 
-    public List<Movie> find(String title) {
-        return repository.findAllByTitle(title);
+    public Page<List<Movie>> find(String title, Pageable pageable) {
+        return repository.findAllByTitleContains(title,pageable);
     }
 
-    public List<Movie> findAllMovies(String title,Integer page,Integer perPage,Integer total, Integer totalPages,String sortBy ){
-        Pageable paging = PageRequest.of(page,perPage, Sort.by(sortBy));
-        Page<Movie> pageResult = repository.findAll(paging);
-
-        if (pageResult.hasContent()){
-            return pageResult.getContent();
-        }else{
-            return new ArrayList<Movie>();
-        }
-    }
-
-    public List<Movie> findAll() {
-        return repository.findAll();
+    public Slice<Movie> findAll(Pageable pageable) {
+        return repository.findAll(pageable);
     }
 
     private void updateData(Movie newMovie, Movie movie) {
@@ -70,10 +58,11 @@ public class MovieService {
         }
     }
 
-    public Page<Movie> findPage(String title,Integer page, Integer perPage){
-        List<Movie> movies = repository.findAllByTitle(title);
+    public Page<List<Movie>> findPage(String title, Integer page, Integer perPage){
         PageRequest pageRequest = PageRequest.of(page, perPage);
-        return repository.findAll(pageRequest);
+        Page<List<Movie>> movies = find(title, pageRequest);
+
+        return movies;
     }
 
 }
