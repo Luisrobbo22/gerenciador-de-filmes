@@ -41,8 +41,6 @@ public class MovieService {
         Movie nMovie = repository.findByImdbID(movie.getImdbID());
         if (nMovie == null) {
             movie = repository.saveAndFlush(movie);
-        } else if (!movie.getImdbID().equals(nMovie.getImdbID())) {
-            movie = repository.save(movie);
         } else {
             throw new DataIntegretyException("Filme já cadastrado");
         }
