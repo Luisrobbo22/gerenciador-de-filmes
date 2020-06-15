@@ -23,7 +23,7 @@ public class MovieController {
 
     @GetMapping(value = "/{title}")
     public ResponseEntity<Page<List<Movie>>> find(@PathVariable String title, Pageable pageable) {
-        return ResponseEntity.ok().body(service.find(title,pageable));
+        return ResponseEntity.ok().body(service.find(title, pageable));
 
     }
 

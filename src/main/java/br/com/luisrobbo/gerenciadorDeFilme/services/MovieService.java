@@ -18,7 +18,7 @@ public class MovieService {
     private MovieRepository repository;
 
     public Page<List<Movie>> find(String title, Pageable pageable) {
-        return repository.findAllByTitleContains(title,pageable);
+        return repository.findAllByTitleContains(title, pageable);
     }
 
     public Slice<Movie> findAll(Pageable pageable) {
@@ -41,7 +41,7 @@ public class MovieService {
         Movie nMovie = repository.findByImdbID(movie.getImdbID());
         if (nMovie == null) {
             movie = repository.saveAndFlush(movie);
-        } else if (!movie.getImdbID().equals(nMovie.getImdbID())){
+        } else if (!movie.getImdbID().equals(nMovie.getImdbID())) {
             movie = repository.save(movie);
         } else {
             throw new DataIntegretyException("Filme já cadastrado");
@@ -58,7 +58,7 @@ public class MovieService {
         }
     }
 
-    public Page<List<Movie>> findPage(String title, Integer page, Integer perPage){
+    public Page<List<Movie>> findPage(String title, Integer page, Integer perPage) {
         PageRequest pageRequest = PageRequest.of(page, perPage);
         Page<List<Movie>> movies = find(title, pageRequest);
 
